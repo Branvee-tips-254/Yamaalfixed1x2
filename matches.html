@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<<<<<<< HEAD
 <html>
 <head>
   <title>Matches Page</title>
@@ -10,5 +11,231 @@
 <body>
   <h1>Welcome! You have access to today’s matches.</h1>
   <p>Matches will appear here once posted by admin.</p>
+=======
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YAMAALFIXED1X2 - Matches</title>
+  <style>
+    body {
+      background: radial-gradient(circle at center,#060b1a,#020409);
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 10px 10px 100px 10px;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    .matches-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .matches-section {
+      background: rgba(255,255,255,0.1);
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 5px;
+      backdrop-filter: blur(10px);
+    }
+
+    .date-header {
+      text-align: center;
+      font-weight: bold;
+      margin: 5px 0;
+      font-size: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 5px;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      border: 1px solid #444;
+      padding: 4px 6px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #0ff;
+      color: #000;
+    }
+
+    .total-odds {
+      text-align: right;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    .button-container {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .button-container button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      background-color: #008cff;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: 0.3s;
+    }
+
+    .button-container button:hover {
+      background-color: #00aaff;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      padding: 5px 0;
+      font-size: 0.8rem;
+      color: #ccc;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+    }
+  </style>
+</head>
+<body>
+  <h1>YAMAALFIXED1X2</h1>
+
+  <div class="matches-container">
+    <!-- Today's Matches -->
+    <div class="matches-section" id="todaySection">
+      <div class="date-header" id="todayDate">Loading...</div>
+      <table id="todayTable">
+        <thead>
+          <tr><th>Match</th><th>Pick</th><th>Odds</th><th>Result</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="total-odds">Total Odds: <span id="todayTotalOdds">0</span></div>
+    </div>
+
+    <!-- Past Matches -->
+    <div class="matches-section" id="yesterdaySection">
+      <div id="yesterdayMatchesContainer"></div>
+    </div>
+  </div>
+
+  <div class="button-container">
+    <button onclick="window.open('https://t.me/branveetips','_blank')">Join Channel</button>
+    <button onclick="window.open('https://t.me/branvoske','_blank')">Contact Admin</button>
+  </div>
+
+  <footer>© 2025 YAMAALFIXED1X2</footer>
+
+<script>
+  function calculateTotalOdds(games) {
+    let total = 1;
+    games.forEach(g => total *= parseFloat(g.odds || 1));
+    return total.toFixed(2);
+  }
+
+  function createTableRow(match) {
+    return `<tr>
+      <td>${match.match}</td>
+      <td>${match.pick}</td>
+      <td>${match.odds}</td>
+      <td>${match.result}</td>
+    </tr>`;
+  }
+
+  async function loadMatches() {
+    try {
+      const todayRes = await fetch('/today');
+      const todayData = await todayRes.json();
+      const tbody = document.querySelector('#todayTable tbody');
+      tbody.innerHTML = '';
+
+      if (todayData.games && todayData.games.length > 0) {
+        todayData.games.forEach(game => tbody.innerHTML += createTableRow(game));
+        document.getElementById('todayDate').innerText = new Date().toDateString();
+        document.getElementById('todayTotalOdds').innerText = calculateTotalOdds(todayData.games);
+        document.getElementById('todaySection').style.display = 'block';
+      } else {
+        document.getElementById('todaySection').style.display = 'none';
+      }
+
+      const yRes = await fetch('/yesterday');
+      const yData = await yRes.json();
+      const container = document.getElementById('yesterdayMatchesContainer');
+      container.innerHTML = '';
+
+      if (yData.length > 0) {
+        const grouped = {};
+        yData.forEach(match => {
+          const date = match.date || 'Unknown Date';
+          if (!grouped[date]) grouped[date] = [];
+          grouped[date].push(match);
+        });
+
+        Object.keys(grouped)
+          .sort((a, b) => new Date(b) - new Date(a))
+          .forEach(date => {
+            const section = document.createElement('div');
+            section.innerHTML = `<div class="date-header">${date}</div>`;
+            let tableHTML = `<table><thead><tr><th>Match</th><th>Pick</th><th>Odds</th><th>Result</th></tr></thead><tbody>`;
+            grouped[date].forEach(match => tableHTML += createTableRow(match));
+            tableHTML += '</tbody></table>';
+            section.innerHTML += tableHTML;
+            container.appendChild(section);
+          });
+
+        document.getElementById('yesterdaySection').style.display = 'block';
+      } else {
+        document.getElementById('yesterdaySection').style.display = 'none';
+      }
+    } catch (err) {
+      console.error('Error loading matches:', err);
+    }
+  }
+
+  loadMatches();
+
+  // --- Silent auto logout on password change ---
+  async function checkPasswordChange() {
+    try {
+      const res = await fetch('/password');
+      const data = await res.json();
+      const savedPassword = localStorage.getItem('loginPassword');
+
+      if (!savedPassword) {
+        window.location.href = '/login';
+        return;
+      }
+
+      if (data.password !== savedPassword) {
+        localStorage.removeItem('loginPassword');
+        window.location.reload();
+      }
+    } catch (err) {
+      console.error('Password check failed', err);
+    }
+  }
+
+  // Check every 5 seconds
+  checkPasswordChange();
+  setInterval(checkPasswordChange, 5000);
+</script>
+>>>>>>> 3c693e3 (Initial commit)
 </body>
 </html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YAMAALFIXED1X2 - Admin Panel</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: radial-gradient(circle at center, #060b1a,#020409); color: #fff; padding: 20px; }
+    h1 { text-align: center; font-size: 2rem; margin-bottom: 20px; }
+    .section { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; margin-bottom: 30px; backdrop-filter: blur(10px); }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+    th, td { border: 1px solid #444; padding: 8px; text-align: left; }
+    th { background-color: #0ff; color: #000; }
+    td[contenteditable="true"] { background-color: rgba(255,255,255,0.2); }
+    .button-group { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+    button { padding: 8px 15px; border: none; border-radius: 8px; background-color: #008cff; color: white; cursor: pointer; transition: 0.3s; }
+    button:hover { background-color: #00aaff; }
+    .total-odds { margin-top: 10px; font-weight: bold; text-align: right; }
+    input[type="date"], input[type="text"] { padding: 6px; border-radius: 6px; border: none; }
+    @media (max-width: 600px) { table, th, td { font-size: 0.8rem; } .button-group { flex-direction: column; } }
+  </style>
+</head>
+<body>
+  <h1>YAMAALFIXED1X2 - Admin Panel</h1>
+
+  <!-- Today's Games -->
+  <div class="section" id="todays-section">
+    <table id="todayTable">
+      <thead>
+        <tr>
+          <th>Match</th>
+          <th>Pick</th>
+          <th>Odds</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td contenteditable="true">Team A Vs Team B</td>
+          <td contenteditable="true">FT DRAW</td>
+          <td contenteditable="true">3.50</td>
+          <td><button onclick="deleteRow(this)">Delete</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="total-odds">Total Odds: <span id="totalOdds">3.50</span></div>
+    <div class="button-group">
+      <button onclick="addTodayRow()">Add Another Game</button>
+      <button onclick="postTodaysGames()">Post Today's Games</button>
+    </div>
+  </div>
+
+  <!-- Yesterday's Results -->
+  <div class="section" id="yesterdays-section">
+    <label>Date for all matches: <input type="date" id="yesterdayDate"></label>
+    <table id="yesterdayTable">
+      <thead>
+        <tr>
+          <th>Match</th>
+          <th>Pick</th>
+          <th>Result</th>
+          <th>Odds</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="button-group">
+      <button onclick="addYesterdayRow()">Add Another Game</button>
+      <button onclick="updateYesterdays()">Update Yesterday's Results</button>
+    </div>
+  </div>
+
+  <!-- Password Section -->
+  <div class="section" id="password-section">
+    <input type="text" id="newPassword" placeholder="Enter new password">
+    <button onclick="updatePassword()">Update Password</button>
+    <p>Current Password: <span id="currentPassword" style="font-weight:bold; color:#0ff; cursor:pointer;" onclick="copyPassword()">Loading...</span></p>
+  </div>
+
+<script>
+  function calculateTotalOdds() {
+    const table = document.getElementById('todayTable').getElementsByTagName('tbody')[0];
+    let total = 1;
+    for (let row of table.rows) total *= parseFloat(row.cells[2].innerText || 1);
+    document.getElementById('totalOdds').innerText = total.toFixed(2);
+  }
+
+  function addTodayRow() {
+    const table = document.getElementById('todayTable').getElementsByTagName('tbody')[0];
+    const row = table.insertRow();
+    row.insertCell().contentEditable="true"; row.cells[0].innerText="Team X Vs Team Y";
+    row.insertCell().contentEditable="true"; row.cells[1].innerText="FT DRAW";
+    row.insertCell().contentEditable="true"; row.cells[2].innerText="3.50";
+    row.insertCell().innerHTML='<button onclick="deleteRow(this)">Delete</button>';
+    calculateTotalOdds();
+  }
+
+  function addYesterdayRow() {
+    const table = document.getElementById('yesterdayTable').getElementsByTagName('tbody')[0];
+    const row = table.insertRow();
+    row.insertCell().contentEditable="true"; row.cells[0].innerText="Team X Vs Team Y";
+    row.insertCell().contentEditable="true"; row.cells[1].innerText="FT DRAW";
+    row.insertCell().contentEditable="true"; row.cells[2].innerText="Pending";
+    row.insertCell().contentEditable="true"; row.cells[3].innerText="3.50";
+    row.insertCell().innerHTML='<button onclick="deleteRow(this)">Delete</button>';
+  }
+
+  function deleteRow(btn) {
+    const row = btn.parentNode.parentNode;
+    row.parentNode.removeChild(row);
+    calculateTotalOdds();
+  }
+
+  document.getElementById('todayTable').addEventListener('input', calculateTotalOdds);
+
+  async function postTodaysGames() {
+    const table = document.getElementById('todayTable').getElementsByTagName('tbody')[0];
+    const games=[];
+    for(let row of table.rows){
+      games.push({ match: row.cells[0].innerText, pick: row.cells[1].innerText, odds: row.cells[2].innerText });
+    }
+    await fetch('/today',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({games,totalOdds:document.getElementById('totalOdds').innerText})});
+    alert("Today's games posted successfully!");
+  }
+
+  async function loadYesterdays(){
+    const tbody=document.getElementById('yesterdayTable').getElementsByTagName('tbody')[0];
+    tbody.innerHTML='';
+    const res=await fetch('/yesterday'); const data=await res.json();
+    data.forEach(item=>{
+      const row=tbody.insertRow();
+      row.insertCell().contentEditable="true"; row.cells[0].innerText=item.match;
+      row.insertCell().contentEditable="true"; row.cells[1].innerText=item.pick;
+      row.insertCell().contentEditable="true"; row.cells[2].innerText=item.result || 'Pending';
+      row.insertCell().contentEditable="true"; row.cells[3].innerText=item.odds || '0';
+      row.insertCell().innerHTML='<button onclick="deleteRow(this)">Delete</button>';
+    });
+  }
+
+  async function updateYesterdays(){
+    const dateInput=document.getElementById('yesterdayDate').value;
+    if(!dateInput){alert("Select date!"); return;}
+    const tbody=document.getElementById('yesterdayTable').getElementsByTagName('tbody')[0];
+    const matches=[];
+    for(let row of tbody.rows){
+      matches.push({ match: row.cells[0].innerText, pick: row.cells[1].innerText, result: row.cells[2].innerText, odds: row.cells[3].innerText, date: dateInput });
+    }
+    await fetch('/yesterday',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(matches)});
+    alert("Yesterday's matches updated successfully!");
+  }
+
+  // Password section
+  async function loadPassword(){ try{ const res=await fetch('/password'); const data=await res.json(); document.getElementById('currentPassword').innerText=data.password;}catch(err){document.getElementById('currentPassword').innerText="Error";}}
+  async function updatePassword(){const newPass=document.getElementById('newPassword').value.trim();if(!newPass){alert("Enter new password!");return;} await fetch('/password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:newPass})}); alert("Password updated!");document.getElementById('newPassword').value=''; loadPassword();}
+  function copyPassword(){navigator.clipboard.writeText(document.getElementById('currentPassword').innerText); alert("Password copied!");}
+
+  loadYesterdays(); loadPassword(); calculateTotalOdds();
+</script>
+</body>
+</html>

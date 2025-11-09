@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <form id="loginForm">
   <input type="password" id="password" placeholder="Enter password" required />
   <button type="submit">Login</button>
@@ -26,3 +27,219 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
   }
 });
 </script>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YAMAALFIXED1X2 - Login</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      font-family: "Poppins", sans-serif;
+      background: radial-gradient(circle at center, #060b1a, #020409);
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      position: relative;
+    }
+
+    .bubbles {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(0, 140, 255, 0.2);
+      filter: blur(10px);
+      animation: float 20s linear infinite alternate;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0); }
+      50% { transform: translate(50vw, 50vh); }
+      100% { transform: translate(-50vw, 0); }
+    }
+
+    .login-container {
+      position: relative;
+      z-index: 1;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(15px);
+      border-radius: 25px;
+      padding: 3rem 2rem;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(0, 140, 255, 0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .login-container h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: 2px;
+    }
+
+    .login-container h2 {
+      font-size: 1.1rem;
+      font-weight: 400;
+      opacity: 0.8;
+      margin-bottom: 2rem;
+    }
+
+    input[type="password"] {
+      width: 80%;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .error-message {
+      color: #ff5555;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      min-height: 1.2rem;
+    }
+
+    button.login-btn {
+      width: 60%;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 12px;
+      background-color: #008cff;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-bottom: 1rem;
+    }
+
+    button.login-btn:hover {
+      background-color: #00aaff;
+    }
+
+    .contact-line {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .contact-line span {
+      opacity: 0.8;
+    }
+
+    .contact-line button {
+      padding: 0.6rem 1rem;
+      border: none;
+      border-radius: 12px;
+      background-color: #008cff;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .contact-line button:hover {
+      background-color: #00aaff;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 15px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #ccc;
+      z-index: 1;
+    }
+
+    @media (max-width: 600px) {
+      .login-container h1 { font-size: 2rem; }
+      .login-container h2 { font-size: 1rem; }
+      button.login-btn { width: 70%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bubbles">
+    <div class="bubble" style="width:120px; height:120px; top:10%; left:20%; animation-duration:25s;"></div>
+    <div class="bubble" style="width:100px; height:100px; top:50%; left:60%; animation-duration:30s;"></div>
+    <div class="bubble" style="width:140px; height:140px; top:70%; left:30%; animation-duration:35s;"></div>
+    <div class="bubble" style="width:110px; height:110px; top:30%; left:80%; animation-duration:28s;"></div>
+    <div class="bubble" style="width:130px; height:130px; top:60%; left:10%; animation-duration:32s;"></div>
+  </div>
+
+  <div class="login-container">
+    <h1>YAMAALFIXED1X2</h1>
+    <h2>INPUT PASSWORD TO LOG IN</h2>
+    <input id="passwordInput" type="password" placeholder="Enter Password" oninput="clearError()" />
+    <div class="error-message" id="errorMsg"></div>
+    <button class="login-btn" onclick="checkPassword()">Login</button>
+    <div class="contact-line">
+      <span>Don't know the password?</span>
+      <button onclick="window.location.href='contact.html'">Contact Admin</button>
+    </div>
+  </div>
+
+  <footer>© 2025 YAMAALFIXED1X2</footer>
+
+<script>
+function clearError() {
+  document.getElementById("errorMsg").textContent = "";
+}
+
+async function checkPassword() {
+  const input = document.getElementById("passwordInput").value.trim();
+  const errorMsg = document.getElementById("errorMsg");
+
+  if (!input) {
+    errorMsg.textContent = "Please enter a password.";
+    return;
+  }
+
+  try {
+    const response = await fetch('/password'); // Fetch current password
+    const data = await response.json();
+    const correctPassword = data.password;
+
+    if (input === correctPassword) {
+      // Save password in localStorage for session tracking
+      localStorage.setItem("loginPassword", input);
+      window.location.href = "matches.html";
+    } else {
+      errorMsg.textContent = "Wrong password, please try again";
+    }
+  } catch(err) {
+    console.error("Failed to fetch password:", err);
+    errorMsg.textContent = "Error fetching password. Try later.";
+  }
+}
+</script>
+
+</body>
+</html>
+>>>>>>> 3c693e3 (Initial commit)

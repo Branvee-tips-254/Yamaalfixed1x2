@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Admin - YAMAALFIXED1X2</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at center, #060b1a, #020409);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    header {
+      text-align: center;
+      font-size: 2rem;
+      letter-spacing: 2px;
+      padding: 1rem 0;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    .contact-container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      border-radius: 20px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    }
+
+    .contact-container h1 {
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      letter-spacing: 1px;
+    }
+
+    .contact-container p {
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .button-row button {
+      padding: 0.8rem 1.5rem;
+      margin: 0.5rem;
+      border: none;
+      border-radius: 10px;
+      background-color: #008cff;
+      color: white;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .button-row button:hover {
+      background-color: #00aaff;
+    }
+
+    .cautions {
+      text-align: left;
+      background: rgba(255,255,255,0.05);
+      padding: 1rem;
+      border-radius: 10px;
+      margin-top: 1rem;
+      line-height: 1.5;
+      font-size: 0.9rem;
+    }
+
+    .cautions li {
+      margin-bottom: 0.5rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      color: #ccc;
+      font-size: 0.8rem;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+    }
+
+    @media (max-width: 500px) {
+      .button-row {
+        flex-direction: column;
+        align-items: center;
+      }
+      .button-row button {
+        width: 80%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>Contact Admin</header>
+
+  <main>
+    <div class="contact-container">
+      <h1>Need Help?</h1>
+      <p>If you don’t know the password or have questions, contact the admin via the buttons below:</p>
+
+      <div class="button-row">
+        <button onclick="window.open('https://wa.me/254734786784','_blank')">WhatsApp</button>
+        <button onclick="window.open('https://t.me/Branvoske','_blank')">Telegram</button>
+        <button onclick="window.open('https://www.facebook.com/share/16wVuoVL7R/','_blank')">Facebook</button>
+        <button onclick="window.open('https://www.instagram.com/tipsclarifier?igsh=M2IyeWptNW90MDFr','_blank')">Instagram</button>
+      </div>
+
+      <ul class="cautions">
+        <li>Please note: No free games are delivered.</li>
+        <li>Admin will never ask for your personal credentials.</li>
+        <li>All predictions and tips are for guidance only.</li>
+        <li>Do not share your password with anyone.</li>
+        <li>Contact admin only via these official channels.</li>
+      </ul>
+    </div>
+  </main>
+
+  <footer>© 2025 YAMAALFIXED1X2</footer>
+</body>
+</html>

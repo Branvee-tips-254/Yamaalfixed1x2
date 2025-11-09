@@ -1,5 +1,6 @@
 const express = require('express');
 const fs = require('fs');
+<<<<<<< HEAD
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const cron = require('node-cron');
@@ -123,3 +124,95 @@ app.get('/today-password', (req, res) => {
 
 // --- Start server ---
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));
+=======
+const path = require('path');
+
+const app = express();
+app.use(express.json()); // parse JSON bodies
+app.use(express.static(__dirname)); // serve static files
+
+// ------------------ FILE PATHS ------------------
+const PASSWORD_FILE = path.join(__dirname, 'password.json');
+const TODAY_FILE = path.join(__dirname, 'todayMatches.json');
+const YESTERDAY_FILE = path.join(__dirname, 'yesterdayMatches.json');
+
+// ------------------ CREATE FILES IF MISSING ------------------
+if (!fs.existsSync(PASSWORD_FILE)) fs.writeFileSync(PASSWORD_FILE, JSON.stringify({ password: "1234" }, null, 2));
+if (!fs.existsSync(TODAY_FILE)) fs.writeFileSync(TODAY_FILE, JSON.stringify({ games: [], totalOdds: 0 }, null, 2));
+if (!fs.existsSync(YESTERDAY_FILE)) fs.writeFileSync(YESTERDAY_FILE, JSON.stringify([], null, 2));
+
+// ------------------ PASSWORD ROUTES ------------------
+app.get('/password', (req, res) => {
+  try {
+    const data = JSON.parse(fs.readFileSync(PASSWORD_FILE, 'utf8'));
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to read password file" });
+  }
+});
+
+app.post('/password', (req, res) => {
+  const { password } = req.body;
+  if (!password) return res.status(400).json({ error: "No password provided" });
+  try {
+    fs.writeFileSync(PASSWORD_FILE, JSON.stringify({ password }, null, 2));
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to save password" });
+  }
+});
+
+// ------------------ TODAY'S MATCHES ------------------
+app.get('/today', (req, res) => res.sendFile(TODAY_FILE));
+
+app.post('/today', (req, res) => {
+  const todayDate = new Date().toDateString();
+  const games = (req.body.games || []).map(game => ({
+    ...game,
+    date: todayDate,
+    result: game.result || "Pending"
+  }));
+  const totalOdds = req.body.totalOdds || 0;
+
+  // Save only to todayMatches.json
+  fs.writeFileSync(TODAY_FILE, JSON.stringify({ games, totalOdds }, null, 2));
+
+  res.json({ ok: true });
+});
+
+// ------------------ YESTERDAY'S MATCHES ------------------
+app.get('/yesterday', (req, res) => res.sendFile(YESTERDAY_FILE));
+
+app.post('/yesterday', (req, res) => {
+  const matches = req.body.map(match => ({
+    ...match,
+    date: match.date || new Date().toDateString()
+  }));
+  fs.writeFileSync(YESTERDAY_FILE, JSON.stringify(matches, null, 2));
+  res.json({ ok: true });
+});
+
+// ------------------ PAGES ------------------
+app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
+app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
+app.get('/matches', (req, res) => res.sendFile(path.join(__dirname, 'matches.html')));
+// ------------------ ALL MATCHES (combined for front-end) ------------------
+app.get('/matches', (req, res) => {
+  try {
+    const todayData = JSON.parse(fs.readFileSync(TODAY_FILE, 'utf8'));
+    const yesterdayData = JSON.parse(fs.readFileSync(YESTERDAY_FILE, 'utf8'));
+    const allMatches = [
+      ...(todayData.games || []),
+      ...yesterdayData
+    ];
+    res.json(allMatches);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to read match files" });
+  }
+});
+
+// ------------------ START SERVER ------------------
+const PORT = 3000;
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+>>>>>>> 3c693e3 (Initial commit)

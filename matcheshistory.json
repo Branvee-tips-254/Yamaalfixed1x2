@@ -1,0 +1,10 @@
+[
+  {
+    "date": "2025-11-09",
+    "games": [
+      { "match": "Team A Vs Team B", "pick": "FT DRAW", "odds": "3.50", "result": "" },
+      { "match": "Team C Vs Team D", "pick": "FT WIN", "odds": "2.10", "result": "" }
+    ]
+  },
+  ...
+]
